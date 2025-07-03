@@ -26,11 +26,6 @@ jobs:
       - name: List build output
         run: ls -la build/libs/
 
-      - name: Rename JAR to app.jar
-        run: |
-          JAR_NAME=$(ls build/libs/*.jar | head -n 1)
-          mv "$JAR_NAME" build/libs/app.jar
-
       - name: Build and Push Docker Image
         uses: mr-smithers-excellent/docker-build-push@v4
         with:
