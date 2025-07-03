@@ -20,6 +20,20 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build
 
+      - name: Debug Docker login
+        run: |
+          echo "Username: ${{ secrets.DOCKER_USERNAME }}"
+          echo "Testing Docker login..."
+          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+          echo "Login successful!"
+          
+      - name: Test repository access
+        run: |
+          docker pull hello-world
+          docker tag hello-world docker.io/sudarshan2504/test:latest
+          docker push docker.io/sudarshan2504/test:latest
+          echo "Test push successful!"
+
       - name: Build and Push Docker Image
         uses: mr-smithers-excellent/docker-build-push@v4
         with:
@@ -28,5 +42,10 @@ jobs:
           registry: docker.io
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Create repository if it doesn't exist
+        run: |
+            # This will fail if repo doesn't exist, but that's okay
+            docker pull docker.io/sudarshan2504/demoapp:latest || echo "Repository might not exist yet"
           
   
